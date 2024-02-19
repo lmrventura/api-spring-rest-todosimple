@@ -1,29 +1,33 @@
 package com.luizventura.todosimple.models;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.hibernate.sql.Update;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
+import javax.persistence.Entity;
+import javax.persistence.Column;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 @Entity
 //@Table(name="user")
 @Table(name = User.TABLE_NAME)
 public class User {
-    public interface CreateUser {}
-    public interface UpdateUser {}
+    public interface CreateUser {
+
+    }
+    public interface UpdateUser {
+
+    }
 
     public static final String TABLE_NAME = "user";
 
@@ -45,7 +49,8 @@ public class User {
     @Size(groups = {CreateUser.class, UpdateUser.class}, min = 8, max = 60)
     private String password;
 
-    //private List<Task> tasks = new ArrayList<Task> ();
+    @OneToMany(mappedBy = "user") //quem está mapeando/quem é o dono das tasks na classe Task
+    private List<Task> tasks = new ArrayList<Task>();
 
     public User() {
     }
@@ -80,6 +85,16 @@ public class User {
         this.password = password;
     }
     
+    //Getters and Setters Tasks list
+    public List<Task> getTasks() {
+        return this.tasks;
+    }
+
+    public void setTasks(List<Task> tasks) {
+        this.tasks = tasks;
+    }
+
+
     //hashcode and equals
     @Override
     public int hashCode() {
@@ -93,32 +108,20 @@ public class User {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (obj == this)
             return true;
-        if (!(obj instanceof User)){
-            return false;
-        }
         if (obj == null)
             return false;
-        if (getClass() != obj.getClass())
+        if (!(obj instanceof User))
             return false;
         User other = (User) obj;
-        if (id == null) {
+        if (this.id == null)
             if (other.id != null)
                 return false;
-        } else if (!id.equals(other.id))
-            return false;
-        if (username == null) {
-            if (other.username != null)
+            else if (!this.id.equals(other.id))
                 return false;
-        } else if (!username.equals(other.username))
-            return false;
-        if (password == null) {
-            if (other.password != null)
-                return false;
-        } else if (!password.equals(other.password))
-            return false;
-        return true;
+        return Objects.equals(this.id, other.id) && Objects.equals(this.username, other.username)
+                && Objects.equals(this.password, other.password);
     }
 
 }
