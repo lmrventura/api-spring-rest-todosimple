@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.luizventura.todosimple.models.User;
-import com.luizventura.todosimple.repositories.TaskRepository;
+// import com.luizventura.todosimple.repositories.TaskRepository;
 import com.luizventura.todosimple.repositories.UserRepository;
 
 @Service
@@ -16,8 +16,8 @@ public class UserService {
     @Autowired //construtor
     private UserRepository userRepository;
 
-    @Autowired
-    private TaskRepository taskRepository;
+    // @Autowired
+    // private TaskRepository taskRepository; não faz sentido salvar task dentro do userService criando usuário e salvando task no momento de criação.
     //Não usamos get e set aqui, apenas Construtores para podermos instanciar os atributos.
     
 
@@ -28,16 +28,16 @@ public class UserService {
     
     public User findById(Long id) {
         Optional<User> user = this.userRepository.findById(id); //JpaRepository-PagingAndSortingRepository-CrudRepository-FindById
-        user.orElseThrow(() -> new RuntimeException(){
+        return user.orElseThrow(() -> new RuntimeException(
             "Usuário não encontrado! Id: "+ id +", Tipo: "+ User.class.getName()
-        }); //() -> new Exception(); - essa arrowfunction não pode ser usada porque a Exception padrão para a aplicação.
+        )); //() -> new Exception(); - essa arrowfunction não pode ser usada porque a Exception padrão para a aplicação.
     }
 
     @Transactional //do spring - utilizar sempre que for persistir algo (create or update)) no banco
     public User create(User obj) {
-        obj.setId(id: null); //para garantir que está criando um novo objeto/user, caso um usuário malicioso tentar alterar o banco.
+        obj.setId(null);; //para garantir que está criando um novo objeto/user, caso um usuário malicioso tentar alterar o banco.
         obj = this.userRepository.save(obj);
-        this.taskRepository.saveAll(obj.getTasks()); //caso já tenha criado usuário com tasks, apesar de não ser comum.
+        //this.taskRepository.saveAll(obj.getTasks()); //caso já tenha criado usuário com tasks, apesar de não ser comum.
         return obj;
     }
 
