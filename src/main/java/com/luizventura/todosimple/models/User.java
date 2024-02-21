@@ -1,5 +1,6 @@
 package com.luizventura.todosimple.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
 
@@ -22,10 +23,10 @@ import javax.validation.constraints.Size;
 //@Table(name="user")
 @Table(name = User.TABLE_NAME)
 public class User {
-    public interface CreateUser {
+    public interface CreateUser { //validação
 
     }
-    public interface UpdateUser {
+    public interface UpdateUser { //validação
 
     }
 
@@ -86,6 +87,7 @@ public class User {
     }
     
     //Getters and Setters Tasks list
+    @JsonIgnore //para não retornar todas as tasks quando retornar o usuário. Ex: se o usuário tiver 500 tasks vai demorar de returnar o usuário por conta do volume de dados.
     public List<Task> getTasks() {
         return this.tasks;
     }
