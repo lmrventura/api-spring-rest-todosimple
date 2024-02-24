@@ -24,7 +24,7 @@ import com.luizventura.todosimple.services.UserService;
 
 @RestController
 @RequestMapping("/user")
-@Validated
+@Validated //validações da interface no model
 public class UserController {
 
     @Autowired
