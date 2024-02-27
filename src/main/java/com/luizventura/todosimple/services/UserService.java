@@ -9,6 +9,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.luizventura.todosimple.models.User;
 // import com.luizventura.todosimple.repositories.TaskRepository;
 import com.luizventura.todosimple.repositories.UserRepository;
+import com.luizventura.todosimple.services.exceptions.DataBidingViolationException;
+import com.luizventura.todosimple.services.exceptions.ObjectNotFoundException;
 
 @Service
 public class UserService {
@@ -28,7 +30,7 @@ public class UserService {
     
     public User findById(Long id) {
         Optional<User> user = this.userRepository.findById(id); //JpaRepository-PagingAndSortingRepository-CrudRepository-FindById
-        return user.orElseThrow(() -> new RuntimeException(
+        return user.orElseThrow(() -> new ObjectNotFoundException( // exception IMPLEMENTED AT "GlobalExceptionHandler.java" / new RuntimeException(
             "Usuário não encontrado! Id: "+ id +", Tipo: "+ User.class.getName()
         )); //() -> new Exception(); - essa arrowfunction não pode ser usada porque a Exception padrão para a aplicação.
     }
@@ -53,7 +55,7 @@ public class UserService {
         try{
             this.userRepository.deleteById(id);
         }catch(Exception e){
-            throw new RuntimeException("Não é possível excluir pois há entidades relacionadas."); //como o usuário tem tasks não faz sentido deletar as tasks para deletar os usuários. O mais recomendado seria um delete lógico, apenas desativando do banco o User ao invés de apagar.
+            throw new DataBidingViolationException("Não é possível excluir pois há entidades relacionadas."); //como o usuário tem tasks não faz sentido deletar as tasks para deletar os usuários. O mais recomendado seria um delete lógico, apenas desativando do banco o User ao invés de apagar.
         }
     }
 }
